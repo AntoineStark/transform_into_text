@@ -17,15 +17,18 @@ def resize_image(img, sizeX, sizeY, nX, nY):
     return img
 
 
-def create_images_from_videos_and_resize(cap, sizeX, sizeY, nX, nY):
+def create_images_from_videos_and_resize(cap, sizeX, sizeY, nX, nY, start, duration):
     """
     This function takes a video and creates a list of tiles from it.
     The tiles are of size sizeX x sizeY.
     """
     frames = []
+    cap.set(cv.CAP_PROP_POS_MSEC, start * 1000)
     while True:
         ret, frame = cap.read()
         if not ret:
+            break
+        if cap.get(cv.CAP_PROP_POS_MSEC) > (start + duration) * 1000:
             break
         frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         frame = resize_image(frame, sizeX, sizeY, nX, nY)

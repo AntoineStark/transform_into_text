@@ -22,15 +22,21 @@ def main(
     nY,
     n_palette,
     input_video,
+    output_dir,
     no_video_output=False,
     dither="ordered",
+    start=0,
+    duration=-1,
 ):
     name = os.path.splitext(os.path.basename(input_video))[0]
 
     # create folder called f"{naem}_{n_palette}_{sizeY}" to store the output files
 
-    folder = f"{name}_{n_palette}_{sizeY}"
-    if not os.path.exists(f"{name}_{n_palette}_{sizeY}"):
+    if output_dir is not None:
+        folder = output_dir
+    else:
+        folder = f"{name}_{n_palette}_{sizeY}"
+    if not os.path.exists(folder):
         os.makedirs(folder)
 
     video_name = f"{folder}/{name}_{n_palette}_{sizeY}_dithered.mp4"
@@ -42,7 +48,11 @@ def main(
     frame_count = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
 
     print(f"Loading video {input_video} with {frame_count} frames at {fps} fps...")
-    frames = create_images_from_videos_and_resize(cap, sizeX, sizeY, nX, nY)
+    if duration > 0:
+        print(f"Processing from {start} to {start + duration} seconds...")
+    frames = create_images_from_videos_and_resize(
+        cap, sizeX, sizeY, nX, nY, start, duration
+    )
     print(f"{len(frames)} frames loaded.")
 
     print()
@@ -70,7 +80,7 @@ def main(
     print()
 
     print(f"Saving closest tile frames as {closest_tile_name}...")
-    save_closest_tile_frames_to_file(closest_tile_frames, closest_tile_name)
+    save_closest_tile_frames_to_file(closest_tile_frames, closest_tile_name, nX, nY)
     print(f"{closest_tile_name} saved.")
 
     print()
@@ -100,6 +110,16 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--input", type=str, required=True, help="Input video file path, required"
+    )
+    parser.add_argument("--start", type=int, default=0, help="Start second, default 0")
+    parser.add_argument(
+        "--duration", type=int, default=-1, help="Duration in seconds, default -1 (all)"
+    )
+    parser.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help="Input video file path, default is input video name",
     )
     parser.add_argument(
         "--sizeX", type=int, default=8, help="Tile width in pixels, default 8"
@@ -142,6 +162,9 @@ if __name__ == "__main__":
         args.nY,
         args.n_palette,
         args.input,
+        args.output,
         args.no_video_output,
         args.dither,
+        args.start,
+        args.duration,
     )
