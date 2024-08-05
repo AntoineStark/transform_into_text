@@ -29,7 +29,7 @@ def save_closest_tile_frames_to_file(closest_tile_frames, filename, nX, nY):
     This function saves the indexes to a file.
     """
     with open(filename, "w") as f:
-        f.write(f"FONT\n\n{nX} {nY}\n\n")
+        f.write(f"FRAMES\n\n{nX} {nY}\n\n")
         for i in trange(closest_tile_frames.shape[0]):
             closest_tile_frame = closest_tile_frames[i]
             for j in range(closest_tile_frame.shape[0]):
