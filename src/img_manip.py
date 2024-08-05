@@ -28,7 +28,7 @@ def create_images_from_videos_and_resize(cap, sizeX, sizeY, nX, nY, start, durat
         ret, frame = cap.read()
         if not ret:
             break
-        if cap.get(cv.CAP_PROP_POS_MSEC) > (start + duration) * 1000:
+        if duration > 0 and cap.get(cv.CAP_PROP_POS_MSEC) > (start + duration) * 1000:
             break
         frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         frame = resize_image(frame, sizeX, sizeY, nX, nY)
